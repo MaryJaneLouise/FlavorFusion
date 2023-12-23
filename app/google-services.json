@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "881961150270",
+    "project_id": "flavorfusion-6f6ef",
+    "storage_bucket": "flavorfusion-6f6ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881961150270:android:9b452f26103ad52e81ee6f",
+        "android_client_info": {
+          "package_name": "com.mariejuana.flavorfusion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR33lgmB9R9KoaNpjS5C6McziXhIfMLtQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
