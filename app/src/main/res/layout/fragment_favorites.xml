@@ -6,16 +6,38 @@
     android:layout_height="match_parent"
     tools:context=".ui.screens.favorites.FavoritesFragment">
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_meals"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <TextView
-        android:id="@+id/txt_no_fave_available"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="There is no favorite meal."
-        android:gravity="center" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:padding="16dp">
+            <EditText
+                android:id="@+id/id_fave_meal_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="Search favorite meal"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_no_fave_available"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="There is no favorite meal."
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_meals"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

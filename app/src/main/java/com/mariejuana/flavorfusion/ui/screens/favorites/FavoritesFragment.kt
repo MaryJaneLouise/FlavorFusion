@@ -2,6 +2,8 @@ package com.mariejuana.flavorfusion.ui.screens.favorites
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +60,45 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         getAllFaveFood()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
+        val username = sharedPref?.getString("username", "defaultUsername")
+
+        binding.idFaveMealSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val coroutineContext = Job() + Dispatchers.IO
+                val scope = CoroutineScope(coroutineContext + CoroutineName("SearchFaveMeal"))
+                val searchFaveMeal = binding.idFaveMealSearch.text.toString().lowercase()
+
+                scope.launch(Dispatchers.IO) {
+                    val result = username?.let { database.getFavoriteMealsByName(it, searchFaveMeal) }
+                    faveMealData = arrayListOf()
+                    if (result != null) {
+                        faveMealData.addAll(
+                            result.map {
+                                mapMeal(it)
+                            }
+                        )
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        adapter.updateMeal(faveMealData)
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Nothing to do
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Nothing to do
+            }
+        })
+    }
+
     override fun removeFaveFood(username: String, meal: Meal) {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("removeFave"))
@@ -86,7 +127,7 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         val username = sharedPref?.getString("username", "defaultUsername")
 
         scope.launch(Dispatchers.IO) {
-            val meals = username?.let { database.getFavoriteMeals(it) }
+            val meals = username?.let { database.getFavoriteMealsByUsername(it) }
             faveMealData = arrayListOf()
             if (meals != null) {
                 faveMealData.addAll(

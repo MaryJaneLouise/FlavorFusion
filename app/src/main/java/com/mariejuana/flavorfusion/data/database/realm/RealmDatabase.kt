@@ -37,9 +37,15 @@ class RealmDatabase {
     }
 
     // Gets the favorites of the current user
-    fun getFavoriteMeals(username: String): List<MealModel>? {
+    fun getFavoriteMealsByUsername(username: String): List<MealModel>? {
         val user = realm.query<UserModel>("username == $0", username).first().find()
         return user?.listFaveFood
+    }
+
+    // Search the favorites of the current user
+    fun getFavoriteMealsByName(username: String, mealName: String): List<MealModel>? {
+        val user = realm.query<UserModel>("username == $0", username).first().find()
+        return user?.listFaveFood?.filter { meal -> meal.name == mealName }
     }
 
     // Gets the randomized food data from the current user
