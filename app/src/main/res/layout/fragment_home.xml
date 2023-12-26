@@ -61,7 +61,7 @@
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="0.3"
+                                android:layout_weight="0.35"
                                 android:orientation="vertical">
 
                                 <LinearLayout
@@ -85,7 +85,7 @@
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="0.55"
+                                android:layout_weight="0.7"
                                 android:gravity="center_vertical"
                                 android:orientation="vertical">
 
@@ -124,28 +124,68 @@
                         </LinearLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <Button
-                        android:id="@+id/button_fave_food"
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Add to favorites"
-                        app:layout_constraintStart_toEndOf="@+id/meal_details" />
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="4dp">
+                            <Button
+                                android:id="@+id/button_fave_food"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="Add to favorites" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"
+                            android:orientation="vertical"
+                            android:layout_marginStart="4dp">
+                            <Button
+                                android:id="@+id/button_random_food"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="Randomize"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:text="Meals from home"
-            android:textSize="20dp"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cards_city_info"/>
+            app:layout_constraintTop_toBottomOf="@+id/cards_city_info"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meals from "
+                android:textSize="20dp" />
+
+            <Spinner
+                android:id="@+id/area_meal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_meals"

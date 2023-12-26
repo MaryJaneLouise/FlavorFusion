@@ -1,28 +1,33 @@
 package com.mariejuana.flavorfusion.ui.screens.favorites
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mariejuana.flavorfusion.data.adapters.IngredientAdapter
-import com.mariejuana.flavorfusion.data.helpers.repositories.AllIngredientQuery
-import com.mariejuana.flavorfusion.data.helpers.retrofit.RetrofitHelper
-import com.mariejuana.flavorfusion.data.models.meals.Ingredient
+import com.google.firebase.auth.FirebaseAuth
+import com.mariejuana.flavorfusion.data.adapters.FaveMealAdapter
+import com.mariejuana.flavorfusion.data.database.realm.RealmDatabase
+import com.mariejuana.flavorfusion.data.database.realm.models.MealModel
+import com.mariejuana.flavorfusion.data.models.meals.Meal
 import com.mariejuana.flavorfusion.databinding.FragmentFavoritesBinding
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
     private lateinit var _binding: FragmentFavoritesBinding
-    private lateinit var adapter: IngredientAdapter
-    private lateinit var ingredientData: ArrayList<Ingredient>
-    private lateinit var ingredient: Ingredient
+    private lateinit var adapter: FaveMealAdapter
+    private lateinit var faveMealData: ArrayList<Meal>
 
+    private var database = RealmDatabase()
+    private lateinit var auth : FirebaseAuth
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -34,8 +39,8 @@ class FavoritesFragment : Fragment() {
         val root: View = binding.root
 
         // Set the array list for the ingredients
-        ingredientData = arrayListOf()
-        adapter = IngredientAdapter(ingredientData, requireContext())
+        faveMealData = arrayListOf()
+        adapter = FaveMealAdapter(faveMealData, requireContext(), this)
 
         // Loads the recyclerview to be able to load them after creating the view
         // It loads horizontally, otherwise it will be no good when loaded vertically
@@ -45,11 +50,62 @@ class FavoritesFragment : Fragment() {
             rvMeals.adapter = adapter
         }
 
-        // Loads the necessary data for the recyclerview
-        lifecycleScope.launch(Dispatchers.IO) {
-
-        }
-
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllFaveFood()
+    }
+
+    override fun removeFaveFood(username: String, meal: Meal) {
+        val coroutineContext = Job() + Dispatchers.IO
+        val scope = CoroutineScope(coroutineContext + CoroutineName("removeFave"))
+        scope.launch(Dispatchers.IO) {
+            database.removeFromFavorite(username, meal)
+        }
+    }
+
+    private fun mapMeal(meal: MealModel): Meal {
+        return Meal(
+            idMeal = meal.idMeal,
+            strMeal = meal.name,
+            strArea = meal.area,
+            strCategory = meal.category,
+            strDrinkAlternate = meal.drinkAlternate,
+            strInstructions = meal.instructions,
+            strMealThumb = meal.mealThumb,
+            strTags = meal.tags,
+        )
+    }
+
+    private fun getAllFaveFood() {
+        val coroutineContext = Job() + Dispatchers.IO
+        val scope = CoroutineScope(coroutineContext + CoroutineName("loadAllFaveFood"))
+        val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
+        val username = sharedPref?.getString("username", "defaultUsername")
+
+        scope.launch(Dispatchers.IO) {
+            val meals = username?.let { database.getFavoriteMeals(it) }
+            faveMealData = arrayListOf()
+            if (meals != null) {
+                faveMealData.addAll(
+                    meals.map {
+                        mapMeal(it)
+                    }
+                )
+            }
+
+            withContext(Dispatchers.Main) {
+                adapter.updateMeal(faveMealData)
+                if (faveMealData.isEmpty()) {
+                    binding.rvMeals.visibility = View.GONE
+                    binding.txtNoFaveAvailable.visibility = View.VISIBLE
+                } else {
+                    binding.rvMeals.visibility = View.VISIBLE
+                    binding.txtNoFaveAvailable.visibility = View.GONE
+                }
+            }
+        }
     }
 }

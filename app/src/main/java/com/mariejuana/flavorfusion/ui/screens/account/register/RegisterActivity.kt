@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.mariejuana.flavorfusion.data.helpers.realm.RealmDatabase
+import com.mariejuana.flavorfusion.data.database.realm.RealmDatabase
 import com.mariejuana.flavorfusion.databinding.ActivityRegisterBinding
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope

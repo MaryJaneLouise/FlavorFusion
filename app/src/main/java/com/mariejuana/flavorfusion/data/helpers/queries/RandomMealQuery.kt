@@ -1,4 +1,4 @@
-package com.mariejuana.flavorfusion.data.helpers.repositories
+package com.mariejuana.flavorfusion.data.helpers.queries
 
 import com.mariejuana.flavorfusion.data.constants.API
 import com.mariejuana.flavorfusion.data.models.meals.query.Meals

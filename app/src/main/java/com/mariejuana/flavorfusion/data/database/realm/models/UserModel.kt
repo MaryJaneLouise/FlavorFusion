@@ -1,4 +1,4 @@
-package com.mariejuana.flavorfusion.data.helpers.realm.models
+package com.mariejuana.flavorfusion.data.database.realm.models
 
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
@@ -13,4 +13,5 @@ class UserModel: RealmObject {
     var username: String = ""
     var password: String = ""
     var listFaveFood: RealmList<MealModel> = realmListOf()
+    var randomFood: RandomMealModel? = null
 }

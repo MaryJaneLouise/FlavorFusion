@@ -1,5 +1,6 @@
 package com.mariejuana.flavorfusion.ui.screens.account.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,6 +31,8 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY
             startActivity(intent)
+
+
         }
 
         with(binding){
@@ -64,6 +67,12 @@ class LoginActivity : AppCompatActivity() {
                 if(task.isSuccessful){
                     binding.btnLogin.isEnabled = true
                     binding.progressIndicator.visibility = View.GONE
+
+                    val sharedPref = this.getSharedPreferences("username_login", Context.MODE_PRIVATE)
+                    val editor = sharedPref?.edit()
+                    editor?.putString("username", binding.edtEmail.text.toString())
+                    editor?.apply()
+
                     val intent = Intent(this,MainActivity::class.java)
                     startActivity(intent)
                 }

@@ -19,9 +19,5 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.FlavorFusion.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
-
-    <style name="Theme.FlavorFusion.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
-
     <style name="Theme.FlavorFusion" parent="Base.Theme.FlavorFusion" />
 </resources>
