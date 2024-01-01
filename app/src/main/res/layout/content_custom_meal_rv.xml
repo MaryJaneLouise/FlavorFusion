@@ -79,13 +79,20 @@
                                 android:text="Name"
                                 android:textSize="20dp" />
 
+                            <TextView
+                                android:id="@+id/txt_meal_category"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Category" />
+
+
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
-                android:id="@+id/show_button_unfave_show"
+                android:id="@+id/show_button_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -98,11 +105,12 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp">
                     <Button
-                        android:id="@+id/button_unfave_food"
+                        android:id="@+id/button_delete_food"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Remove"/>
+                        android:text="Delete"/>
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -110,10 +118,23 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp">
                     <Button
-                        android:id="@+id/button_show_details"
+                        android:id="@+id/button_update_food"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Show details"/>
+                        android:text="Update"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp">
+                    <Button
+                        android:id="@+id/button_show_food"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Show"/>
                 </LinearLayout>
 
             </LinearLayout>

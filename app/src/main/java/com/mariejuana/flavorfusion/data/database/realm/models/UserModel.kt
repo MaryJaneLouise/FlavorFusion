@@ -13,5 +13,6 @@ class UserModel: RealmObject {
     var username: String = ""
     var password: String = ""
     var listFaveFood: RealmList<MealModel> = realmListOf()
+    var listCustomFood: RealmList<CustomMealModel> = realmListOf()
     var randomFood: RandomMealModel? = null
 }

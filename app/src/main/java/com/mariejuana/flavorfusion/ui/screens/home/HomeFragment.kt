@@ -10,7 +10,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +22,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.firebase.auth.FirebaseAuth
 import com.mariejuana.flavorfusion.data.adapters.MealAdapter
 import com.mariejuana.flavorfusion.data.database.realm.RealmDatabase
@@ -30,6 +34,7 @@ import com.mariejuana.flavorfusion.data.helpers.retrofit.RetrofitHelper
 import com.mariejuana.flavorfusion.data.models.meals.Area
 import com.mariejuana.flavorfusion.data.models.meals.Meal
 import com.mariejuana.flavorfusion.databinding.FragmentHomeBinding
+import com.mariejuana.flavorfusion.ui.screens.food.selected.SelectedFoodInformationFragment
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -165,6 +170,7 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
                     .load(randomMealBody.meals.map { it.strMealThumb }.joinToString(", "))
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .override(200,200)
+                    .transform(CenterCrop(), RoundedCorners(25))
                     .into(binding.mealImage)
 
 //                lifecycleScope.launch(Dispatchers.IO) {
@@ -180,6 +186,16 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
 //                        }
 //                    }
 //                }
+
+                binding.buttonShowDetails.setOnClickListener {
+                    var a  = SelectedFoodInformationFragment()
+                    val manager: FragmentManager =
+                        (context as AppCompatActivity).supportFragmentManager
+                    val bundle = Bundle()
+                    bundle.putString("FoodName", randomMealBody.meals.joinToString(", ") { it.strMeal });
+                    a.arguments = bundle
+                    a.show(manager,"")
+                }
 
                 binding.buttonFaveFood.setOnClickListener {
                     val builder = AlertDialog.Builder(requireContext())

@@ -40,12 +40,11 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Set the array list for the ingredients
+        // Set the array list for the favorite meals
         faveMealData = arrayListOf()
         adapter = FaveMealAdapter(faveMealData, requireContext(), this)
 
         // Loads the recyclerview to be able to load them after creating the view
-        // It loads horizontally, otherwise it will be no good when loaded vertically
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(activity)
         with(binding) {
             rvMeals.layoutManager = layoutManager
@@ -104,6 +103,7 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         val scope = CoroutineScope(coroutineContext + CoroutineName("removeFave"))
         scope.launch(Dispatchers.IO) {
             database.removeFromFavorite(username, meal)
+            getAllFaveFood()
         }
     }
 
@@ -117,6 +117,47 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
             strInstructions = meal.instructions,
             strMealThumb = meal.mealThumb,
             strTags = meal.tags,
+            strSource = "",
+            strIngredient1 = "",
+            strIngredient2 = "",
+            strIngredient3 = "",
+            strIngredient4 = "",
+            strIngredient5 = "",
+            strIngredient6 = "",
+            strIngredient7 = "",
+            strIngredient8 = "",
+            strIngredient9 = "",
+            strIngredient10 = "",
+            strIngredient11 = "",
+            strIngredient12 = "",
+            strIngredient13 = "",
+            strIngredient14 = "",
+            strIngredient15 = "",
+            strIngredient16 = "",
+            strIngredient17 = "",
+            strIngredient18 = "",
+            strIngredient19 = "",
+            strIngredient20 = "",
+            strMeasure1 = "",
+            strMeasure2 = "",
+            strMeasure3 = "",
+            strMeasure4 = "",
+            strMeasure5 = "",
+            strMeasure6 = "",
+            strMeasure7 = "",
+            strMeasure8 = "",
+            strMeasure9 = "",
+            strMeasure10 = "",
+            strMeasure11 = "",
+            strMeasure12 = "",
+            strMeasure13 = "",
+            strMeasure14 = "",
+            strMeasure15 = "",
+            strMeasure16 = "",
+            strMeasure17 = "",
+            strMeasure18 = "",
+            strMeasure19 = "",
+            strMeasure20 = "",
         )
     }
 

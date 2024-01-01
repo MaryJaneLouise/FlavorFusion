@@ -21,7 +21,10 @@ import com.mariejuana.flavorfusion.data.helpers.retrofit.RetrofitHelper
 import com.mariejuana.flavorfusion.data.models.meals.Meal
 import com.mariejuana.flavorfusion.data.models.meals.SearchMeal
 import com.mariejuana.flavorfusion.databinding.FragmentSearchBinding
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.create
@@ -29,7 +32,7 @@ import retrofit2.create
 class SearchFragment : Fragment(), SearchMealAdapter.MealAdapterInterface {
     private lateinit var _binding: FragmentSearchBinding
     private lateinit var adapter: SearchMealAdapter
-    private lateinit var mealData: ArrayList<SearchMeal>
+    private lateinit var mealData: ArrayList<Meal>
     private lateinit var mealSearch: SearchMeal
     private lateinit var auth: FirebaseAuth
 
@@ -73,36 +76,40 @@ class SearchFragment : Fragment(), SearchMealAdapter.MealAdapterInterface {
         binding.txtNoSearchMatch.visibility = View.GONE
         binding.idAllMealSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val searchMeal = binding.idAllMealSearch.text.toString().lowercase()
+                // Nothing to do.. literally
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Nothing to do.. literally
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchMeal = binding.idAllMealSearch.text.toString()
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     val searchMealInitiate = RetrofitHelper.getInstance().create(SearchMealQuery::class.java)
                     val returnSearchMeal = searchMealInitiate.getSearchedMeal(searchMeal)
                     val searchMealBody = returnSearchMeal.body()
 
-                    if (searchMealBody != null) {
-                        mealSearch = searchMealBody.meals[0]
+                    // Since it can't bring back the null value, we just converted the return value
+                    // to that specific string
+                    if (searchMealBody.toString() != "SearchMeals(meals=null)") {
                         mealData.clear()
-                        mealData.addAll(searchMealBody.meals)
+                        mealData.addAll(searchMealBody!!.meals)
                         withContext(Dispatchers.Main) {
                             adapter.updateMeal(mealData)
                         }
                     }
                 }
-
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Nothing to do
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Nothing to do
             }
         })
     }
 
-    override fun addFaveFood(username: String, meal: SearchMeal) {
-        // Nothing to do for now
+    override fun addFaveFood(username: String, meal: Meal) {
+        val coroutineContext = Job() + Dispatchers.IO
+        val scope = CoroutineScope(coroutineContext + CoroutineName("addFave"))
+        scope.launch(Dispatchers.IO) {
+            database.addToFavorite(username, meal)
+        }
     }
 }
