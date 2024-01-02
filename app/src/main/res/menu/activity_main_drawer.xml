@@ -20,5 +20,9 @@
             android:id="@+id/nav_custom_recipe"
             android:icon="@drawable/ic_custom_recipe"
             android:title="@string/menu_custom_recipe" />
+        <item
+            android:id="@+id/nav_account_settings"
+            android:icon="@drawable/ic_account_settings"
+            android:title="@string/menu_account_settings" />
     </group>
 </menu>

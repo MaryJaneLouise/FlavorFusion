@@ -1,6 +1,5 @@
 package com.mariejuana.flavorfusion
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.mariejuana.flavorfusion.data.database.realm.RealmDatabase
 import com.mariejuana.flavorfusion.databinding.ActivityMainBinding
-import com.mariejuana.flavorfusion.ui.screens.account.dashboard.DashboardAccountActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -53,18 +51,12 @@ class MainActivity : AppCompatActivity() {
         val userNameTextView = headerView.findViewById<TextView>(R.id.txt_user_name)
         val userEmailTextView = headerView.findViewById<TextView>(R.id.txt_user_email)
         val buttonLogoutUser = headerView.findViewById<Button>(R.id.btn_logout)
-        val buttonSettingsUser = headerView.findViewById<Button>(R.id.btn_account)
 
         val currentUserEmail = currentUser?.email
         val currentUserName = database.getCurrentUserName(currentUserEmail.toString())
 
         userNameTextView.text = currentUserName
         userEmailTextView.text = currentUserEmail
-
-        buttonSettingsUser.setOnClickListener {
-            val intent = Intent(this, DashboardAccountActivity::class.java)
-            startActivity(intent)
-        }
 
         buttonLogoutUser.setOnClickListener {
             val builder = AlertDialog.Builder(this@MainActivity)

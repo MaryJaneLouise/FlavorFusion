@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,56 +17,77 @@
         app:layout_constraintTop_toTopOf="parent"
         android:padding="50dp">
 
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:src="@drawable/flavorfusionapp"
+            android:layout_marginBottom="16dp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account Registration"
+            android:gravity="center"
+            android:text="Create your account to start your journey into the world of culinary fusion!"
+            android:layout_gravity="center_horizontal"
+            android:textSize="16dp"
+            android:layout_marginBottom="64dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create your account"
+            android:gravity="start"
+            android:layout_gravity="start"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"/>
 
         <EditText
             android:id="@+id/edt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints="emailAddress"
-            android:gravity="center"
-            android:hint="Name"
-            android:inputType="textPersonName" />
+            android:hint="Full name"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:id="@+id/edt_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="emailAddress"
-            android:gravity="center"
             android:hint="Email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="16dp" />
 
         <EditText
             android:id="@+id/edt_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="password"
-            android:gravity="center"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:layout_marginBottom="16dp" />
 
         <EditText
             android:id="@+id/edt_repeat_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="password"
-            android:gravity="center"
-            android:hint="Repeat Password"
-            android:inputType="textPassword" />
+            android:hint="Retype password"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp"/>
 
         <Button
+            style="@style/Widget.Material3.Button.TonalButton"
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Register" />
+            android:text="Register account" />
 
         <ProgressBar
             android:id="@+id/progress_indicator"

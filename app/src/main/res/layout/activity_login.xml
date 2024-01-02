@@ -25,39 +25,91 @@
 <!--            app:lottie_url="https://lottie.host/c8895e3c-28b1-4a6f-8088-64913b251b7a/KHdvdZdcYf.json"-->
 <!--            app:lottie_autoPlay="true"-->
 <!--            app:lottie_loop="true"/>-->
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/flavorfusionapp"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Flavor Fusion"
-            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Blend the Best, Taste the Adventure!"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="64dp"/>
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="horizontal">-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+<!--                <ImageView-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="100dp"-->
+<!--                    android:src="@drawable/flavorfusionapp"/>-->
+<!--            </LinearLayout>-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1"-->
+<!--                android:orientation="vertical"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:layout_gravity="center_vertical">-->
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Flavor Fusion"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="bold"/>-->
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:text="Blend the Best, Taste the Adventure!"-->
+<!--                    android:textSize="12sp"-->
+<!--                    android:textStyle="bold"/>-->
+<!--            </LinearLayout>-->
+<!--        </LinearLayout>-->
+
 
         <EditText
             android:id="@+id/edt_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="emailAddress"
-            android:gravity="center"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
+            android:hint="Email address"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:id="@+id/edt_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints="password"
-            android:gravity="center"
             android:hint="Password"
-
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:layout_marginBottom="16dp"/>
 
         <Button
+            style="@style/Widget.Material3.Button.TonalButton"
             android:id="@+id/btn_login"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login" />
+            android:text="Login"
+            android:layout_marginBottom="38dp"/>
 
         <ProgressBar
             android:id="@+id/progress_indicator"
@@ -84,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="Register."
+                android:text="Register here."
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>

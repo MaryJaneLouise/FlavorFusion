@@ -28,4 +28,10 @@
         android:name="com.mariejuana.flavorfusion.ui.screens.food.NewFoodFragment"
         android:label="@string/menu_custom_recipe"
         tools:layout="@layout/fragment_new_food" />
+
+    <fragment
+        android:id="@+id/nav_account_settings"
+        android:name="com.mariejuana.flavorfusion.ui.screens.account.dashboard.DashboardAccountFragment"
+        android:label="@string/menu_account_settings"
+        tools:layout="@layout/fragment_dashboard_account" />
 </navigation>

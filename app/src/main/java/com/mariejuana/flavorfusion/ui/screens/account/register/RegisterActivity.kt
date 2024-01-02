@@ -61,10 +61,10 @@ class RegisterActivity : AppCompatActivity() {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("addUserToRealm"))
         scope.launch(Dispatchers.IO) {
-            database.addUser(name, email, password)
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
+                        scope.launch(Dispatchers.IO) { database.addUser(name, email, password) }
                         Toast.makeText(this@RegisterActivity,"Successfully registered", Toast.LENGTH_SHORT).show()
                         finish()
                     }

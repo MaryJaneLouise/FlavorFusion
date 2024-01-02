@@ -54,78 +54,36 @@ class EditUserNameDialog : DialogFragment() {
 
         val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
-
-        val bundle = arguments
-        val mealId = bundle!!.getString("EditCustomFoodId")
-        val mealName = bundle!!.getString("EditCustomFoodName")
-        val mealInstruction = bundle!!.getString("EditCustomFoodInstructions")
-        val mealIngredient = bundle!!.getString("EditCustomFoodIngredients")
-
-        val editMealName = mealName.toString()
-        val editMealId = mealId.toString()
-        val editMealInstruction = mealInstruction.toString()
-        val editMealIngredient = mealIngredient.toString()
+        val currentUserName = username?.let { database.getCurrentUserName(it) }
 
         with(binding) {
-            edtUserName.setText(editMealName)
-        }
+            edtUserName.setText(currentUserName)
 
-        // Loads the categories for the meal coming from the API
-        val categoryNamesInitiate = RetrofitHelper.getInstance().create(CategoryAllQuery::class.java)
-        lifecycleScope.launch(Dispatchers.IO) {
-            val resultCategory = categoryNamesInitiate.getAllCategories()
-            val categoryNames = resultCategory.body()
-
-            if (categoryNames != null) {
-                withContext(Dispatchers.Main) {
-                    val categoryListSpinner = categoryNames.meals.map { it.strCategory }
-                    val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, categoryListSpinner)
-
-                    with(binding) {
-//                        edtMealCategory.adapter = spinnerAdapter
-
-                        btnUpdate.setOnClickListener {
-//                            if (edtMealName.text.isNullOrBlank() || edtMealName.text.isNullOrEmpty()) {
-//                                edtMealName.error = "Required"
-//                                return@setOnClickListener
-//                            }
-//
-//                            if (edtMealIngredients.text.isNullOrBlank() || edtMealIngredients.text.isNullOrEmpty()) {
-//                                edtMealIngredients.error = "Required"
-//                                return@setOnClickListener
-//                            }
-//
-//                            if (edtMealInstructions.text.isNullOrBlank() || edtMealInstructions.text.isNullOrEmpty()) {
-//                                edtMealInstructions.error = "Required"
-//                                return@setOnClickListener
-//                            }
-//
-//                            val mealName = edtMealName.text.toString()
-//                            val mealIngredients = edtMealIngredients.text.toString()
-//                            val mealInstructions = edtMealInstructions.text.toString()
-//                            val mealCategory = edtMealCategory.selectedItem as String
-//
-//                            val coroutineContext = Job() + Dispatchers.IO
-//                            val scope = CoroutineScope(coroutineContext + CoroutineName("updateCustomMeal"))
-//                            scope.launch(Dispatchers.IO) {
-//                                if (username != null) {
-//                                    database.updateCustomMeal(username, editMealId, mealName, mealCategory, mealIngredients, mealInstructions)
-//                                }
-//                                withContext(Dispatchers.Main) {
-//                                    Toast.makeText(context, "Custom meal has been updated.", Toast.LENGTH_SHORT).show()
-//                                    refreshDataCallback.refreshData()
-//                                    dialog?.dismiss()
-//                                }
-//                            }
-                        }
-
-                        // Makes the dialog cancel
-                        btnCancel.setOnClickListener {
-                            dialog?.cancel()
-                        }
-                    }
-
+            btnUpdate.setOnClickListener {
+                if (edtUserName.text.isNullOrEmpty()) {
+                    edtUserName.error = "Required"
+                    return@setOnClickListener
                 }
+
+                val newName = edtUserName.text.toString()
+
+                val coroutineContext = Job() + Dispatchers.IO
+                val scope = CoroutineScope(coroutineContext + CoroutineName("updateNameUser"))
+                scope.launch(Dispatchers.IO) {
+                    if (username != null) {
+                        database.updateUserName(username, newName)
+                    }
+                    withContext(Dispatchers.Main) {
+                        refreshDataCallback.refreshData()
+                        Toast.makeText(requireContext(),"Successfully changed name.", Toast.LENGTH_SHORT).show()
+                        dialog?.dismiss()
+                    }
+                }
+            }
+
+            // Makes the dialog cancel
+            btnCancel.setOnClickListener {
+                dialog?.cancel()
             }
         }
     }

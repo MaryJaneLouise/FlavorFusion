@@ -90,6 +90,40 @@ class RealmDatabase {
         }
     }
 
+    // Updates the name of the current user
+    suspend fun updateUserName(username: String, newName: String) {
+        withContext(Dispatchers.IO) {
+            realm.write {
+                val userResult: UserModel? = realm.query<UserModel>("username == $0", username).first().find()
+
+                if (userResult != null) {
+                    val user = findLatest(userResult)
+
+                    user?.apply {
+                        this.name = newName
+                    }
+                }
+            }
+        }
+    }
+
+    // Updates the password of the current user
+    suspend fun updatePassword(username: String, newPassword: String) {
+        withContext(Dispatchers.IO) {
+            realm.write {
+                val userResult: UserModel? = realm.query<UserModel>("username == $0", username).first().find()
+
+                if (userResult != null) {
+                   val user = findLatest(userResult)
+
+                    user?.apply {
+                        this.password = newPassword
+                    }
+                }
+            }
+        }
+    }
+
     // Add a meal to the favorites of current user
     suspend fun addToFavorite(username: String, meal: Meal) {
         withContext(Dispatchers.IO) {
