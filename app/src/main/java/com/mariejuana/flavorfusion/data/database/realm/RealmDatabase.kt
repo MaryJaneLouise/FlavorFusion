@@ -45,7 +45,7 @@ class RealmDatabase {
     // Search the favorites of the current user
     fun getFavoriteMealsByName(username: String, mealName: String): List<MealModel>? {
         val user = realm.query<UserModel>("username == $0", username).first().find()
-        return user?.listFaveFood?.filter { meal -> meal.name == mealName }
+        return user?.listFaveFood?.filter { meal -> meal.name.lowercase().contains(mealName) }
     }
 
     // Gets the custom meals made by the current user
@@ -57,7 +57,7 @@ class RealmDatabase {
     // Search the custom meals made by the current user
     fun getCustomMealByName(username: String, mealName: String): List<CustomMealModel>? {
         val user = realm.query<UserModel>("username == $0", username).first().find()
-        return user?.listCustomFood?.filter { meal -> meal.name == mealName }
+        return user?.listCustomFood?.filter { meal -> meal.name.lowercase().contains(mealName) }
     }
 
     // Gets the information about the custom meals

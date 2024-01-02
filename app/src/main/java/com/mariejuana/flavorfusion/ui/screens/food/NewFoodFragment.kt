@@ -1,7 +1,9 @@
-package com.mariejuana.flavorfusion.ui.screens.food.create
+package com.mariejuana.flavorfusion.ui.screens.food
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -58,12 +60,54 @@ class NewFoodFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
+        val username = sharedPref?.getString("username", "defaultUsername")
+
         binding.fabAdd.setOnClickListener {
             val addMealDialog = AddCustomMealDialog()
             val manager: FragmentManager = (context as AppCompatActivity).supportFragmentManager
             addMealDialog.refreshDataCallback = this
             addMealDialog.show(manager, null)
         }
+
+        binding.idAllMealSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val coroutineContext = Job() + Dispatchers.IO
+                val scope = CoroutineScope(coroutineContext + CoroutineName("SearchCustomMeal"))
+                val searchFaveMeal = binding.idAllMealSearch.text.toString().lowercase()
+
+                scope.launch(Dispatchers.IO) {
+                    val result = username?.let { database.getCustomMealByName(it, searchFaveMeal) }
+
+                    mealList = arrayListOf()
+                    if (result != null) {
+                        mealList.addAll(
+                            result.map {
+                                mapCustomMeal(it)
+                            }
+                        )
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        adapter.updateMeal(mealList)
+                        if (mealList.isEmpty()) {
+                            binding.txtNoSearchMatch.visibility = View.VISIBLE
+                            if(searchFaveMeal == "") getAllCustomMeal()
+                        } else {
+                            binding.txtNoSearchMatch.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Nothing to do
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Nothing to do
+            }
+        })
     }
 
     override fun onResume() {
@@ -115,9 +159,11 @@ class NewFoodFragment : Fragment(),
                 if (mealList.isEmpty()) {
                     binding.rvSearchMeal.visibility = View.GONE
                     binding.txtNoCustomMeal.visibility = View.VISIBLE
+                    binding.txtNoSearchMatch.visibility = View.GONE
                 } else {
                     binding.rvSearchMeal.visibility = View.VISIBLE
                     binding.txtNoCustomMeal.visibility = View.GONE
+                    binding.txtNoSearchMatch.visibility = View.GONE
                 }
             }
         }

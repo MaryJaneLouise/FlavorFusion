@@ -73,6 +73,7 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
 
                 scope.launch(Dispatchers.IO) {
                     val result = username?.let { database.getFavoriteMealsByName(it, searchFaveMeal) }
+
                     faveMealData = arrayListOf()
                     if (result != null) {
                         faveMealData.addAll(
@@ -84,6 +85,12 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
 
                     withContext(Dispatchers.Main) {
                         adapter.updateMeal(faveMealData)
+                        if (faveMealData.isEmpty()) {
+                            binding.txtNoSearchMatch.visibility = View.VISIBLE
+                            if (searchFaveMeal == "") getAllFaveFood()
+                        } else {
+                            binding.txtNoSearchMatch.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -183,6 +190,7 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
                 if (faveMealData.isEmpty()) {
                     binding.rvMeals.visibility = View.GONE
                     binding.txtNoFaveAvailable.visibility = View.VISIBLE
+                    binding.txtNoSearchMatch.visibility = View.GONE
                 } else {
                     binding.rvMeals.visibility = View.VISIBLE
                     binding.txtNoFaveAvailable.visibility = View.GONE
