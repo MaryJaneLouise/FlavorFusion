@@ -29,12 +29,15 @@ import retrofit2.create
 class EditCustomMealDialog : DialogFragment() {
     private lateinit var binding: DialogUpdateCustomMealBinding
     lateinit var refreshDataCallback: RefreshDataInterface
+
     private var database = RealmDatabase()
 
+    // Calls the function for the fragment in order to refresh the data after the dialog has been dismissed
     interface RefreshDataInterface {
         fun refreshData()
     }
 
+    // Initializes the layout style of the dialog fragment
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
@@ -51,20 +54,25 @@ class EditCustomMealDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Uses the Shared Preferences in order to share the email into other fragments or activity
         val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
 
+        // Instead of using Shared Preferences, the app uses Bundle Arguments as a way of sharing the data
+        // from another fragment to this dialog
         val bundle = arguments
         val mealId = bundle!!.getString("EditCustomFoodId")
         val mealName = bundle!!.getString("EditCustomFoodName")
         val mealInstruction = bundle!!.getString("EditCustomFoodInstructions")
         val mealIngredient = bundle!!.getString("EditCustomFoodIngredients")
 
+        // Converts the variable into a string
         val editMealName = mealName.toString()
         val editMealId = mealId.toString()
         val editMealInstruction = mealInstruction.toString()
         val editMealIngredient = mealIngredient.toString()
 
+        // Sets the editViewText to have pre-set data from the selected item
         with(binding) {
             edtMealName.setText(editMealName)
             edtMealInstructions.setText(editMealInstruction)
@@ -86,6 +94,7 @@ class EditCustomMealDialog : DialogFragment() {
                         edtMealCategory.adapter = spinnerAdapter
 
                         btnUpdate.setOnClickListener {
+                            // These if statements check the respective fields if they are null / blank / empty
                             if (edtMealName.text.isNullOrBlank() || edtMealName.text.isNullOrEmpty()) {
                                 edtMealName.error = "Required"
                                 return@setOnClickListener
@@ -101,11 +110,14 @@ class EditCustomMealDialog : DialogFragment() {
                                 return@setOnClickListener
                             }
 
+                            // Converts the necessary fields into a string
                             val mealName = edtMealName.text.toString()
                             val mealIngredients = edtMealIngredients.text.toString()
                             val mealInstructions = edtMealInstructions.text.toString()
                             val mealCategory = edtMealCategory.selectedItem as String
 
+                            // Updates the selected custom meal then updates the whole list by calling
+                            // the function refreshData from the fragment after dismissing the dialog
                             val coroutineContext = Job() + Dispatchers.IO
                             val scope = CoroutineScope(coroutineContext + CoroutineName("updateCustomMeal"))
                             scope.launch(Dispatchers.IO) {

@@ -7,19 +7,19 @@
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
 
-    <style name="Theme.FlavorFusion.AppBarOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
-        <item name="colorPrimary">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
-    </style>
+<!--    <style name="Theme.FlavorFusion.AppBarOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">-->
+<!--        <item name="colorPrimary">@android:color/transparent</item>-->
+<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
+<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
+<!--        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>-->
+<!--    </style>-->
 
-    <style name="Theme.FlavorFusion.PopupOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
-        <item name="colorPrimary">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
-    </style>
+<!--    <style name="Theme.FlavorFusion.PopupOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">-->
+<!--        <item name="colorPrimary">@android:color/transparent</item>-->
+<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
+<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
+<!--        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>-->
+<!--    </style>-->
 
     <style name="IconButtons" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="iconPadding">0dp</item>

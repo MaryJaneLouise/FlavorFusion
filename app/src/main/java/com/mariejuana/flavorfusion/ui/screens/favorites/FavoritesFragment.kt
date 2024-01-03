@@ -62,9 +62,12 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Uses the Shared Preferences in order to share the email into other fragments or activity
         val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
 
+        // Searches the Realm database if there's a matching name of the custom meal made by the current user
+        // This shows either the result or the text saying "No result found"
         binding.idFaveMealSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val coroutineContext = Job() + Dispatchers.IO
@@ -105,6 +108,7 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         })
     }
 
+    // Removes the food from the favorites of the current user
     override fun removeFaveFood(username: String, meal: Meal) {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("removeFave"))
@@ -114,6 +118,7 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         }
     }
 
+    // Makes a "map" of the recycler view contents
     private fun mapMeal(meal: MealModel): Meal {
         return Meal(
             idMeal = meal.idMeal,
@@ -168,9 +173,12 @@ class FavoritesFragment : Fragment(), FaveMealAdapter.MealAdapterInterface {
         )
     }
 
+    // Initializes the data from the Realm database and shows it to the screen
+    // if the result is null or there's no fave meal yet, it will show "No favorite meal"
     private fun getAllFaveFood() {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("loadAllFaveFood"))
+
         val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
 

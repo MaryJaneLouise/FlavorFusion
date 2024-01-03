@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initializes the credentials of the current user
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -47,17 +49,21 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        // Initializes the variables / binding needed for the nav header
         val headerView = navView.getHeaderView(0)
         val userNameTextView = headerView.findViewById<TextView>(R.id.txt_user_name)
         val userEmailTextView = headerView.findViewById<TextView>(R.id.txt_user_email)
         val buttonLogoutUser = headerView.findViewById<Button>(R.id.btn_logout)
 
+        // Initializes the user's email from Firebase and name coming from the Realm database
         val currentUserEmail = currentUser?.email
         val currentUserName = database.getCurrentUserName(currentUserEmail.toString())
 
+        // Places the initialized variables for name and email of the current user
         userNameTextView.text = currentUserName
         userEmailTextView.text = currentUserEmail
 
+        // Sets the logout of the user from the application using the Firebase's signOut function
         buttonLogoutUser.setOnClickListener {
             val builder = AlertDialog.Builder(this@MainActivity)
             builder.setMessage("Are you sure you want to logout?")

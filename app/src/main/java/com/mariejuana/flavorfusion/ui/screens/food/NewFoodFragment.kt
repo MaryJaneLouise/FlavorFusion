@@ -60,9 +60,11 @@ class NewFoodFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Uses the Shared Preferences in order to share the email into other fragments or activity
         val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
 
+        // Shows the add custom meal dialog
         binding.fabAdd.setOnClickListener {
             val addMealDialog = AddCustomMealDialog()
             val manager: FragmentManager = (context as AppCompatActivity).supportFragmentManager
@@ -70,6 +72,8 @@ class NewFoodFragment : Fragment(),
             addMealDialog.show(manager, null)
         }
 
+        // Searches the Realm database if there's a matching name of the custom meal made by the current user
+        // This shows either the result or the text saying "No result found"
         binding.idAllMealSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val coroutineContext = Job() + Dispatchers.IO
@@ -92,7 +96,7 @@ class NewFoodFragment : Fragment(),
                         adapter.updateMeal(mealList)
                         if (mealList.isEmpty()) {
                             binding.txtNoSearchMatch.visibility = View.VISIBLE
-                            if(searchFaveMeal == "") getAllCustomMeal()
+                            if (searchFaveMeal == "") { getAllCustomMeal() }
                         } else {
                             binding.txtNoSearchMatch.visibility = View.GONE
                         }
@@ -114,10 +118,13 @@ class NewFoodFragment : Fragment(),
         super.onResume()
         getAllCustomMeal()
     }
+
+    // This refreshes the data once there's an update made for the custom meal or added a new custom meal
     override fun refreshData() {
         getAllCustomMeal()
     }
 
+    // Removes the custom meal made by the current user
     override fun removeCustomFood(username: String, meal: CustomMeal) {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("removeCustomMeal"))
@@ -127,6 +134,7 @@ class NewFoodFragment : Fragment(),
         }
     }
 
+    // Makes a "map" of the recycler view contents
     private fun mapCustomMeal(customMeal: CustomMealModel): CustomMeal {
         return CustomMeal(
             id = customMeal.id.toHexString(),
@@ -137,6 +145,8 @@ class NewFoodFragment : Fragment(),
         )
     }
 
+    // Initializes the data from the Realm database and shows it to the screen
+    // If the result is null or there's no custom meal made, it will show "No custom meal"
     private fun getAllCustomMeal() {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("loadAllCustomMeal"))

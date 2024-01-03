@@ -42,15 +42,18 @@ class DashboardAccountFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initializes the Firebase authentication and gets the name of the current user
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         val currentUserEmail = currentUser?.email
         val currentUserName = database.getCurrentUserName(currentUserEmail.toString())
 
         with(binding) {
+            // Sets the given data from above
             txtUserEmail.text = currentUserEmail
             txtUserName.text = currentUserName
 
+            // Shows the Edit Name dialog
             btnEditName.setOnClickListener {
                 val editUserNameDialog = EditUserNameDialog()
                 val manager: FragmentManager = (context as AppCompatActivity).supportFragmentManager
@@ -59,6 +62,7 @@ class DashboardAccountFragment : Fragment(),
                 editUserNameDialog.show(manager, null)
             }
 
+            // Shows the Edit password dialog
             btnEditPassword.setOnClickListener {
                 val editUserPasswordDialog = EditUserPasswordDialog()
                 val manager: FragmentManager = (context as AppCompatActivity).supportFragmentManager
@@ -72,23 +76,16 @@ class DashboardAccountFragment : Fragment(),
         getNewName()
     }
 
+    // This refreshes the data once there's an update made for the user
     override fun refreshData() {
         getNewName()
     }
 
-    private fun mapUser(user: UserModel): User {
-        return User(
-            id = user.id.toHexString(),
-            name = user.name,
-            username = user.username,
-            password = user.password,
-            favoriteFoodCount = 0
-        )
-    }
-
+    // This function loads the newName generated once the user set the new name for him/her
     private fun getNewName() {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("loadName"))
+
         val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
 

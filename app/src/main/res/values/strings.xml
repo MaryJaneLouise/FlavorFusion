@@ -7,10 +7,10 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_search">Search</string>
+    <string name="menu_home">Dashboard</string>
+    <string name="menu_search">Search from API</string>
     <string name="menu_favorites">Favorites</string>
-    <string name="menu_custom_recipe">Custom Recipe</string>
+    <string name="menu_custom_recipe">Custom recipe</string>
     <string name="menu_account_settings">Account settings</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

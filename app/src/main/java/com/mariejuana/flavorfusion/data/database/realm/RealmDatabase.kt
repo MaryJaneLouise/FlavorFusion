@@ -185,27 +185,42 @@ class RealmDatabase {
                 val userResult: UserModel? = realm.query<UserModel>("username == $0", username).first().find()
 
                 if (userResult != null) {
-                    val mealResult: CustomMealModel? = realm.query<CustomMealModel>("name == $0", name).first().find()
+                    // Enable this code if you want to stay the meal the same as saved in the database
+//                    val mealResult: CustomMealModel? = realm.query<CustomMealModel>("name == $0", name).first().find()
+//
+//                    if (mealResult == null) {
+//                        val meal = CustomMealModel().apply {
+//                            this.name = name
+//                            this.category = category
+//                            this.ingredient = ingredient
+//                            this.instruction = instruction
+//                            this.source = ""
+//                        }
+//
+//                        val saveMeal = copyToRealm(meal)
+//                        if (!findLatest(userResult)?.listCustomFood?.contains(saveMeal)!!) {
+//                            findLatest(userResult)?.listCustomFood?.add(saveMeal)
+//                        }
+//
+//                        findLatest(userResult)?.listCustomFood?.add(saveMeal)
+//                    } else {
+//                        val mealExisting = findLatest(mealResult)
+//                        if (!findLatest(userResult)?.listCustomFood?.contains(mealExisting)!!) {
+//                            findLatest(userResult)?.listCustomFood?.add(mealExisting!!)
+//                        }
+//                    }
 
-                    if (mealResult == null) {
-                        val meal = CustomMealModel().apply {
-                            this.name = name
-                            this.category = category
-                            this.ingredient = ingredient
-                            this.instruction = instruction
-                            this.source = ""
-                        }
-
-                        val saveMeal = copyToRealm(meal)
-                        if (!findLatest(userResult)?.listCustomFood?.contains(saveMeal)!!) {
-                            findLatest(userResult)?.listCustomFood?.add(saveMeal)
-                        }
-                    } else {
-                        val mealExisting = findLatest(mealResult)
-                        if (!findLatest(userResult)?.listCustomFood?.contains(mealExisting)!!) {
-                            findLatest(userResult)?.listCustomFood?.add(mealExisting!!)
-                        }
+                    // This just adds the meal regardless of the name
+                    val meal = CustomMealModel().apply {
+                        this.name = name
+                        this.category = category
+                        this.ingredient = ingredient
+                        this.instruction = instruction
+                        this.source = ""
                     }
+
+                    val saveMeal = copyToRealm(meal)
+                    findLatest(userResult)?.listCustomFood?.add(saveMeal)
                 }
             }
         }

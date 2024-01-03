@@ -34,6 +34,7 @@ class CustomFoodInformationFragment : DialogFragment() {
         return binding.root
     }
 
+    // Initializes the layout style of the dialog fragment
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
@@ -45,19 +46,21 @@ class CustomFoodInformationFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Instead of using Shared Preferences, the app uses Bundle Arguments as a way of sharing the data
+        // from another fragment to this dialog
         val bundle = arguments
-        val mealId = bundle!!.getString("ShowCustomFoodId")
         val mealName = bundle!!.getString("ShowCustomFoodName")
         val mealCategory = bundle!!.getString("ShowCustomFoodCategory")
         val mealInstruction = bundle!!.getString("ShowCustomFoodInstructions")
         val mealIngredient = bundle!!.getString("ShowCustomFoodIngredients")
 
-        val showMealId = mealId.toString()
+        // Converts the variable into a string
         val showMealName = mealName.toString()
         val showMealCategory = mealCategory.toString()
         val showMealInstruction = mealInstruction.toString()
         val showMealIngredient = mealIngredient.toString()
 
+        // Shows the details after getting the values from the Realm database
         lifecycleScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
                 binding.txtMealName.text =  showMealName
@@ -65,7 +68,6 @@ class CustomFoodInformationFragment : DialogFragment() {
 
                 binding.ingredientsList.text = showMealIngredient
                 binding.instructionList.text = showMealInstruction
-
             }
         }
     }

@@ -35,9 +35,10 @@ import retrofit2.create
 class EditUserPasswordDialog : DialogFragment() {
     private lateinit var binding: DialogUpdateAccountPasswordBinding
     private lateinit var auth : FirebaseAuth
+
     private var database = RealmDatabase()
 
-
+    // Initializes the layout style of the dialog fragment
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
@@ -48,18 +49,20 @@ class EditUserPasswordDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DialogUpdateAccountPasswordBinding.inflate(layoutInflater,container,false)
+
+        // Initializes the Firebase authentication
         auth = Firebase.auth
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sharedPref = activity?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
-        val username = sharedPref?.getString("username", "defaultUsername")
-
         with(binding) {
+            // Updates the password of the user
             btnUpdate.setOnClickListener {
+                // These if statements check the respective fields if they are null / blank / empty
                 if (edtUserOldPassword.text.isNullOrEmpty()) {
                     edtUserOldPassword.error = "Required"
                     return@setOnClickListener
@@ -85,8 +88,12 @@ class EditUserPasswordDialog : DialogFragment() {
                     edtUserRetypeNewPassword.error = "Required"
                 }
 
+                // Converts the necessary fields into a string
+                val oldPassword = edtUserOldPassword.text.toString()
                 val newPassword = edtUserNewPassword.text.toString()
-                updatePassword(newPassword)
+
+                // Passes the converted string to the register function
+                updatePassword(oldPassword, newPassword)
             }
 
             // Makes the dialog cancel
@@ -96,20 +103,26 @@ class EditUserPasswordDialog : DialogFragment() {
         }
     }
 
-    private fun updatePassword(newPassword: String) {
+    private fun updatePassword(oldPassword: String, newPassword: String) {
+        // Uses the Shared Preferences in order to share the email into other fragments or activity
         val sharedPref = context?.getSharedPreferences("username_login", Context.MODE_PRIVATE)
         val username = sharedPref?.getString("username", "defaultUsername")
 
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("updatePasswordUser"))
         scope.launch(Dispatchers.IO) {
-            val credential = EmailAuthProvider
-                .getCredential(auth.currentUser?.email.toString(), binding.edtUserOldPassword.text.toString())
+            // Initializes the re-authentication for the Firebase since it is required for it to recheck the details
+            val currentUserEmail = auth.currentUser?.email.toString()
+            val credential = EmailAuthProvider.getCredential(currentUserEmail, oldPassword)
+
+            // Re-authenticates the user being logged in
             auth.currentUser?.reauthenticate(credential)
                 ?.addOnCompleteListener {
+                    // Updates the password to the Firebase
                     auth.currentUser!!.updatePassword(newPassword)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                // Updates the password to the Realm database
                                 scope.launch(Dispatchers.IO) {
                                     if (username != null) {
                                         database.updatePassword(username, newPassword)
@@ -121,9 +134,8 @@ class EditUserPasswordDialog : DialogFragment() {
                         }.addOnFailureListener {
                             Toast.makeText(requireContext(),"Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
                         }
-
                 }!!.addOnFailureListener {
-                    Toast.makeText(requireContext(),"Old Password doesn't match!",Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(),"Error: " + it.localizedMessage,Toast.LENGTH_SHORT).show()
                 }
         }
     }

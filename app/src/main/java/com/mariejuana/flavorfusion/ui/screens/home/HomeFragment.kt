@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,15 +27,19 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.firebase.auth.FirebaseAuth
 import com.mariejuana.flavorfusion.data.adapters.MealAdapter
+import com.mariejuana.flavorfusion.data.constants.StateAPI
 import com.mariejuana.flavorfusion.data.database.realm.RealmDatabase
 import com.mariejuana.flavorfusion.data.helpers.queries.AreaAllQuery
 import com.mariejuana.flavorfusion.data.helpers.queries.HomeMealQuery
 import com.mariejuana.flavorfusion.data.helpers.queries.RandomMealQuery
+import com.mariejuana.flavorfusion.data.helpers.queries.api.RandomMealRepository
 import com.mariejuana.flavorfusion.data.helpers.retrofit.RetrofitHelper
 import com.mariejuana.flavorfusion.data.models.meals.Area
 import com.mariejuana.flavorfusion.data.models.meals.Meal
 import com.mariejuana.flavorfusion.databinding.FragmentHomeBinding
 import com.mariejuana.flavorfusion.ui.screens.food.selected.SelectedFoodInformationFragment
+import com.mariejuana.flavorfusion.ui.screens.home.viewmodel.HomeFragmentFactory
+import com.mariejuana.flavorfusion.ui.screens.home.viewmodel.HomeFragmentViewModel
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,6 +56,7 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
     private lateinit var meal: Meal
     private lateinit var area: Area
     private lateinit var auth : FirebaseAuth
+    private lateinit var viewModel: HomeFragmentViewModel
 
     private var database = RealmDatabase()
 
@@ -70,6 +76,13 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initializes the value for the StateAPI either success, etc. that is coming
+        // from the view model and its factory
+        viewModel = ViewModelProvider(this, HomeFragmentFactory(RandomMealRepository()))[HomeFragmentViewModel::class.java]
+        binding.mealFullDashboard.visibility = View.GONE
+        viewModel.mealRandomData()
+
+        // Initializes the credentials of the current user
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         val username = currentUser?.email
@@ -86,62 +99,93 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
             rvMeals.adapter = adapter
         }
 
-        class RandomMealWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
-            override suspend fun doWork(): Result {
-                // Call the function when the app starts
-                lifecycleScope.launch(Dispatchers.IO) {
-                    fetchAndDisplayRandomMeal()
-
-                    withContext(Dispatchers.Main) {
-                        val randomMeal = username?.let { getRandomMeal(it) }
-                        if (randomMeal != null) {
-                            with(binding) {
-                                txtMealName.text = database.getRandomMeal(username)?.name
-                                txtMealArea.text = database.getRandomMeal(username)?.area
+        // Call the function when the button is clicked and loads the lottie animation
+        binding.buttonRandomFood.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                viewModel.mealStateVM.collect {
+                    when (it) {
+                        is StateAPI.Loading -> {
+                            withContext(Dispatchers.Main) {
+                                binding.animationView.visibility = View.VISIBLE
+                            }
+                        }
+                        is StateAPI.Success -> {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                fetchAndDisplayRandomMeal()
+                                withContext(Dispatchers.Main) {
+                                    binding.animationView.visibility = View.GONE
+                                }
+                            }
+                        }
+                        is StateAPI.Failure -> {
+                            it.e.printStackTrace()
+                        }
+                        is StateAPI.Empty -> {
+                            withContext(Dispatchers.Main) {
+                                binding.animationView.visibility = View.VISIBLE
                             }
                         }
                     }
                 }
-                return Result.success()
             }
         }
 
-        val randomMealWorkRequest = PeriodicWorkRequestBuilder<RandomMealWorker>(24, TimeUnit.HOURS).build()
-        context?.let { WorkManager.getInstance(it).enqueue(randomMealWorkRequest) }
-
-        // Call the function when the app starts
+        // Loads the lottie animation first before loading the data
         lifecycleScope.launch(Dispatchers.IO) {
-            fetchAndDisplayRandomMeal()
-        }
+            viewModel.mealStateVM.collect {
+                when (it) {
+                    is StateAPI.Loading -> {
+                        withContext(Dispatchers.Main) {
+                            binding.animationView.visibility = View.VISIBLE
+                        }
+                    }
+                    is StateAPI.Success -> {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            // Runs the function that loads the data to the screen
+                            fetchAndDisplayRandomMeal()
 
-        // Call the function when the button is clicked
-        binding.buttonRandomFood.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                fetchAndDisplayRandomMeal()
-            }
-        }
-
-        // Set the array list for the areas
-        val areaNamesInitiate = RetrofitHelper.getInstance().create(AreaAllQuery::class.java)
-        lifecycleScope.launch(Dispatchers.IO) {
-            val resultArea = areaNamesInitiate.getAllAreas()
-            val areaNames = resultArea.body()
-
-            if (areaNames != null) {
-                withContext(Dispatchers.Main) {
-                    val areaListSpinner = areaNames.meals.map { it.strArea }
-                    val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, areaListSpinner)
-                    with(binding) {
-                        areaMeal.adapter = spinnerAdapter
-                        areaMeal.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                                val selectedArea = parent.getItemAtPosition(position).toString()
-                                getLocationSpecialty(selectedArea)
+                            // Hides the lottie animation and shows the necessary screens of the Home Fragment
+                            withContext(Dispatchers.Main) {
+                                binding.mealFullDashboard.visibility = View.VISIBLE
+                                binding.animationView.visibility = View.GONE
                             }
 
-                            override fun onNothingSelected(parent: AdapterView<*>) {
-                                // Nothing to do.. literally
+                            // Set the array list for the areas
+                            val areaNamesInitiate = RetrofitHelper.getInstance().create(AreaAllQuery::class.java)
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val resultArea = areaNamesInitiate.getAllAreas()
+                                val areaNames = resultArea.body()
+
+                                // Sets the values got and places them in the spinner
+                                if (areaNames != null) {
+                                    withContext(Dispatchers.Main) {
+                                        val areaListSpinner = areaNames.meals.map { it.strArea }
+                                        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, areaListSpinner)
+                                        with(binding) {
+                                            areaMeal.adapter = spinnerAdapter
+                                            areaMeal.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                                                    val selectedArea = parent.getItemAtPosition(position).toString()
+                                                    getLocationSpecialty(selectedArea)
+                                                }
+
+                                                override fun onNothingSelected(parent: AdapterView<*>) {
+                                                    // Nothing to do.. literally
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                        }
+                    }
+                    is StateAPI.Failure -> {
+                        it.e.printStackTrace()
+                    }
+                    is StateAPI.Empty -> {
+                        withContext(Dispatchers.Main) {
+                            binding.animationView.visibility = View.VISIBLE
+                            binding.mealFullDashboard.visibility = View.GONE
                         }
                     }
                 }
@@ -172,20 +216,6 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
                     .override(200,200)
                     .transform(CenterCrop(), RoundedCorners(25))
                     .into(binding.mealImage)
-
-//                lifecycleScope.launch(Dispatchers.IO) {
-//                    if (username != null) {
-//                        addRandomFood(username, randomMealBody.meals[0])
-//                    }
-//                }
-
-//                binding.buttonRandomFood.setOnClickListener {
-//                    lifecycleScope.launch(Dispatchers.IO) {
-//                        if (username != null) {
-//                            addRandomFood(username, randomMealBody.meals[0])
-//                        }
-//                    }
-//                }
 
                 binding.buttonShowDetails.setOnClickListener {
                     var a  = SelectedFoodInformationFragment()
@@ -219,8 +249,8 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
         }
     }
 
+    // Loads the necessary data for the recyclerview
     private fun getLocationSpecialty(area: String) {
-        // Loads the necessary data for the recyclerview
         val mealInitiate = RetrofitHelper.getInstance().create(HomeMealQuery::class.java)
         lifecycleScope.launch(Dispatchers.IO) {
             val resultMeal = mealInitiate.getSpecificMealsFromArea(area)
@@ -238,30 +268,12 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
     }
 
 
-    // Save the food to the favorites
+    // Save the food to the favorites of the current user
     override fun addFaveFood(username: String, meal: Meal) {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("addFave"))
         scope.launch(Dispatchers.IO) {
             database.addToFavorite(username, meal)
-        }
-    }
-
-    // Saves the random meal to the database of the current user
-    private fun addRandomFood(username: String, meal: Meal) {
-        val coroutineContext = Job() + Dispatchers.IO
-        val scope = CoroutineScope(coroutineContext + CoroutineName("addRandom"))
-        scope.launch(Dispatchers.IO) {
-            database.addRandomMeal(username, meal)
-        }
-    }
-
-    // Gets the random meal for the current user
-    private fun getRandomMeal(username: String) {
-        val coroutineContext = Job() + Dispatchers.IO
-        val scope = CoroutineScope(coroutineContext + CoroutineName("getRandom"))
-        scope.launch(Dispatchers.IO) {
-            database.getRandomMeal(username)
         }
     }
 }
