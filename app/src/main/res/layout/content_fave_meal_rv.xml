@@ -101,7 +101,9 @@
                         android:id="@+id/button_unfave_food"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Remove"/>
+                        app:icon="@drawable/ic_delete"
+                        android:backgroundTint="?attr/colorError"
+                        android:text="Remove meal"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
@@ -113,6 +115,7 @@
                         android:id="@+id/button_show_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:icon="@drawable/ic_see_details"
                         android:text="Show details"/>
                 </LinearLayout>
 

@@ -45,12 +45,12 @@ class LoginActivity : AppCompatActivity() {
         with(binding){
             btnLogin.setOnClickListener{
                 // These if statements check the respective fields if they are null / blank / empty
-                if (edtEmail.text.isNullOrEmpty()) {
+                if (edtEmail.editText?.text.isNullOrEmpty()) {
                     edtEmail.error = "Required"
                     return@setOnClickListener
                 }
 
-                if (edtPassword.text.isNullOrEmpty()) {
+                if (edtPassword.editText?.text.isNullOrEmpty()) {
                     edtPassword.error = "Required"
                     return@setOnClickListener
                 }
@@ -60,8 +60,8 @@ class LoginActivity : AppCompatActivity() {
                 it.isEnabled = false
 
                 // Converts the necessary fields into a string
-                val userEmail = edtEmail.text.toString()
-                val userPass = edtPassword.text.toString()
+                val userEmail = edtEmail.editText?.text.toString()
+                val userPass = edtPassword.editText?.text.toString()
 
                 // Passes the converted string to the register function
                 login(userEmail, userPass)
@@ -96,8 +96,8 @@ class LoginActivity : AppCompatActivity() {
                         btnLogin.isEnabled = true
                         progressIndicator.visibility = View.GONE
 
-                        edtEmail.text.clear()
-                        edtPassword.text.clear()
+                        edtEmail.editText?.text?.clear()
+                        edtPassword.editText?.text?.clear()
                     }
 
                     // Initializes the Shared Preferences in order to use it to many transaction especially for the CRUD purposes
@@ -116,6 +116,9 @@ class LoginActivity : AppCompatActivity() {
                             val name = email.substringBefore("@")
                             database.addUser(name, email, password)
                         }
+
+                        // Updates the password of the user once entered the application
+                        database.updatePassword(email, password)
                     }
 
                     val intent = Intent(this,MainActivity::class.java)

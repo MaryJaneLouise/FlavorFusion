@@ -95,49 +95,42 @@
                 android:id="@+id/show_button_delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintStart_toEndOf="@+id/meal_details"
                 android:layout_marginTop="8dp">
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp">
-                    <Button
-                        android:id="@+id/button_delete_food"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Delete"/>
-                </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp">
+                    android:orientation="horizontal">
+
                     <Button
                         android:id="@+id/button_update_food"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Update"/>
-                </LinearLayout>
+                        android:layout_weight="1"
+                        app:icon="@drawable/ic_update"
+                        android:layout_marginEnd="4dp"
+                        android:text="Update meal"/>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp">
                     <Button
-                        android:id="@+id/button_show_food"
-                        android:layout_width="match_parent"
+                        android:id="@+id/button_delete_food"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Show"/>
+                        android:layout_weight="1"
+                        app:icon="@drawable/ic_delete"
+                        android:backgroundTint="?attr/colorError"
+                        android:layout_marginStart="4dp"
+                        android:text="Delete meal"/>
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/button_show_food"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="See full details"/>
             </LinearLayout>
+
 
         </LinearLayout>
 

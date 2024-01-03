@@ -86,14 +86,14 @@ class EditUserPasswordDialog : DialogFragment() {
                 if (edtUserNewPassword.text.toString() != edtUserRetypeNewPassword.text.toString()) {
                     edtUserNewPassword.error = "Required"
                     edtUserRetypeNewPassword.error = "Required"
+                } else {
+                    // Converts the necessary fields into a string
+                    val oldPassword = edtUserOldPassword.text.toString()
+                    val newPassword = edtUserNewPassword.text.toString()
+
+                    // Passes the converted string to the register function
+                    updatePassword(oldPassword, newPassword)
                 }
-
-                // Converts the necessary fields into a string
-                val oldPassword = edtUserOldPassword.text.toString()
-                val newPassword = edtUserNewPassword.text.toString()
-
-                // Passes the converted string to the register function
-                updatePassword(oldPassword, newPassword)
             }
 
             // Makes the dialog cancel

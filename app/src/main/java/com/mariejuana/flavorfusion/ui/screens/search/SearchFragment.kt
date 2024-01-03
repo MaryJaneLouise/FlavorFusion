@@ -38,6 +38,7 @@ class SearchFragment : Fragment(), SearchMealAdapter.MealAdapterInterface {
 
     private var database = RealmDatabase()
 
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -85,13 +86,12 @@ class SearchFragment : Fragment(), SearchMealAdapter.MealAdapterInterface {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val searchMeal = binding.idAllMealSearch.text.toString()
 
-                // Sets the value for the adapter specially this is a realtime search
                 lifecycleScope.launch(Dispatchers.IO) {
                     val searchMealInitiate = RetrofitHelper.getInstance().create(SearchMealQuery::class.java)
                     val returnSearchMeal = searchMealInitiate.getSearchedMeal(searchMeal)
                     val searchMealBody = returnSearchMeal.body()
 
-                    // Since it can't bring back the null value, the result has been converted the return value
+                    // Since it can't bring back the null value, we just converted the return value
                     // to that specific string
                     if (searchMealBody.toString() != "SearchMeals(meals=null)") {
                         mealData.clear()
@@ -105,7 +105,6 @@ class SearchFragment : Fragment(), SearchMealAdapter.MealAdapterInterface {
         })
     }
 
-    // Adds the selected food to the Realm database for favorites for the current user
     override fun addFaveFood(username: String, meal: Meal) {
         val coroutineContext = Job() + Dispatchers.IO
         val scope = CoroutineScope(coroutineContext + CoroutineName("addFave"))

@@ -30,38 +30,38 @@ class RegisterActivity : AppCompatActivity() {
         with(binding){
             btnRegister.setOnClickListener{
                 // These if statements check the respective fields if they are null / blank / empty
-                if(edtName.text.isNullOrEmpty()){
+                if(edtName.editText?.text.isNullOrEmpty()){
                     edtName.error = "Required"
                     return@setOnClickListener
                 }
 
-                if(edtEmail.text.isNullOrEmpty()){
+                if(edtEmail.editText?.text.isNullOrEmpty()){
                     edtEmail.error = "Required"
                     return@setOnClickListener
                 }
 
-                if(edtPassword.text.length < 6){
+                if(edtPassword.editText?.text?.length!! < 6){
                     edtPassword.error = "Must be greater than or equal to 6 characters."
                     return@setOnClickListener
                 }
 
-                if(edtPassword.text.toString() != edtRepeatPassword.text.toString()){
+                if(edtPassword.editText?.text.toString() != edtRepeatPassword.editText?.text.toString()){
                     edtPassword.error = "Password does not match"
                     edtRepeatPassword.error = "Password does not match"
                     return@setOnClickListener
+                } else {
+                    // Shows the indicator if it success
+                    progressIndicator.visibility = View.VISIBLE
+                    it.isEnabled = false
+
+                    // Converts the necessary fields into a string
+                    val userName = edtName.editText?.text.toString()
+                    val userEmail = edtEmail.editText?.text.toString()
+                    val userPassword = edtPassword.editText?.text.toString()
+
+                    // Passes the converted string to the register function
+                    register(userName, userEmail, userPassword)
                 }
-
-                // Shows the indicator if it success
-                progressIndicator.visibility = View.VISIBLE
-                it.isEnabled = false
-
-                // Converts the necessary fields into a string
-                val userName = edtName.text.toString()
-                val userEmail = edtEmail.text.toString()
-                val userPassword = edtPassword.text.toString()
-
-                // Passes the converted string to the register function
-                register(userName, userEmail, userPassword)
             }
         }
     }

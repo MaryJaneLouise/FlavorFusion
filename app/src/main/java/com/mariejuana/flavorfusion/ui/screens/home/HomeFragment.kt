@@ -59,6 +59,7 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
     private lateinit var viewModel: HomeFragmentViewModel
 
     private var database = RealmDatabase()
+    private var buttonsVisible = false
 
     private val binding get() = _binding!!
 
@@ -97,6 +98,21 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
         with(binding) {
             rvMeals.layoutManager = layoutManager
             rvMeals.adapter = adapter
+        }
+
+        // Initializes the value for the hidden / shown buttons
+        buttonsVisible = false
+        binding.buttonAddRandom.visibility = View.GONE
+
+        // If the card has been pressed, it will show the buttons
+        binding.cvMeal.setOnClickListener {
+            if (!buttonsVisible) {
+                binding.buttonAddRandom.visibility = View.VISIBLE
+                buttonsVisible = true
+            } else {
+                binding.buttonAddRandom.visibility = View.GONE
+                buttonsVisible = false
+            }
         }
 
         // Call the function when the button is clicked and loads the lottie animation
