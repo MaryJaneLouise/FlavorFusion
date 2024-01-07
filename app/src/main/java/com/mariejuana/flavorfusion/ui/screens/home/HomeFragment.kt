@@ -3,6 +3,7 @@ package com.mariejuana.flavorfusion.ui.screens.home
 import android.R
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -174,17 +175,18 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
 
                                 // Sets the values got and places them in the spinner
                                 if (areaNames != null) {
+                                    val areaListSpinner = areaNames.meals.map {  it.strArea }
                                     withContext(Dispatchers.Main) {
-                                        val areaListSpinner = areaNames.meals.map { it.strArea }
                                         val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, areaListSpinner)
                                         with(binding) {
                                             areaMeal.adapter = spinnerAdapter
                                             areaMeal.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                                                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                                                    val selectedArea = parent.getItemAtPosition(position).toString()
-                                                    getLocationSpecialty(selectedArea)
+                                                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                                                    if (view != null) {
+                                                        val selectedArea = parent.getItemAtPosition(position).toString()
+                                                        getLocationSpecialty(selectedArea)
+                                                    }
                                                 }
-
                                                 override fun onNothingSelected(parent: AdapterView<*>) {
                                                     // Nothing to do.. literally
                                                 }
@@ -267,22 +269,23 @@ class HomeFragment : Fragment(), MealAdapter.MealAdapterInterface {
 
     // Loads the necessary data for the recyclerview
     private fun getLocationSpecialty(area: String) {
-        val mealInitiate = RetrofitHelper.getInstance().create(HomeMealQuery::class.java)
         lifecycleScope.launch(Dispatchers.IO) {
-            val resultMeal = mealInitiate.getSpecificMealsFromArea(area)
-            val mealBody = resultMeal.body()
+            val mealInitiate = RetrofitHelper.getInstance().create(HomeMealQuery::class.java)
+            lifecycleScope.launch(Dispatchers.IO) {
+                val resultMeal = mealInitiate.getSpecificMealsFromArea(area)
+                val mealBody = resultMeal.body()
 
-            if (mealBody != null) {
-                meal = mealBody.meals[0]
-                mealData.clear()
-                mealData.addAll(mealBody.meals)
-                withContext(Dispatchers.Main) {
-                    adapter.updateMeal(mealData)
+                if (mealBody != null) {
+                    meal = mealBody.meals[0]
+                    mealData.clear()
+                    mealData.addAll(mealBody.meals)
+                    withContext(Dispatchers.Main) {
+                        adapter.updateMeal(mealData)
+                    }
                 }
             }
         }
     }
-
 
     // Save the food to the favorites of the current user
     override fun addFaveFood(username: String, meal: Meal) {

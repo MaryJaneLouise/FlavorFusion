@@ -1,6 +1,8 @@
 package com.mariejuana.flavorfusion
 
+import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -17,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mariejuana.flavorfusion.data.database.realm.RealmDatabase
 import com.mariejuana.flavorfusion.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DrawerLayout.DrawerListener {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth : FirebaseAuth
@@ -57,7 +59,8 @@ class MainActivity : AppCompatActivity() {
 
         // Initializes the user's email from Firebase and name coming from the Realm database
         val currentUserEmail = currentUser?.email
-        val currentUserName = database.getCurrentUserName(currentUserEmail.toString())
+        val sharedPref = this@MainActivity?.getSharedPreferences("name_user", Context.MODE_PRIVATE)
+        val currentUserName = sharedPref?.getString("name", "defaultUserName")
 
         // Places the initialized variables for name and email of the current user
         userNameTextView.text = currentUserName
@@ -78,10 +81,38 @@ class MainActivity : AppCompatActivity() {
             }
             builder.show()
         }
+
+        drawerLayout.addDrawerListener(this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+        // Nothing to do.. literally.
+    }
+
+    override fun onDrawerOpened(drawerView: View) {
+        // Nothing to do.. literally.
+    }
+
+    override fun onDrawerClosed(drawerView: View) {
+        // Nothing to do.. literally.
+    }
+
+    override fun onDrawerStateChanged(newState: Int) {
+        // Sets the ids of the navigation bar
+        val navView: NavigationView = binding.navView
+        val headerView = navView.getHeaderView(0)
+        val userNameTextView = headerView.findViewById<TextView>(R.id.txt_user_name)
+
+        // Initializes the user's name coming from the passed value from the shared preferences
+        val sharedPref = this@MainActivity?.getSharedPreferences("name_user", Context.MODE_PRIVATE)
+        val currentUserName = sharedPref?.getString("name", "defaultUserName")
+
+        // Places the initialized variables for name  of the current user
+        userNameTextView.text = currentUserName
     }
 }

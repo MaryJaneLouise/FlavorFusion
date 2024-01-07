@@ -102,22 +102,30 @@ class LoginActivity : AppCompatActivity() {
 
                     // Initializes the Shared Preferences in order to use it to many transaction especially for the CRUD purposes
                     // It saves the email as the id of the current user
-                    val sharedPref = this@LoginActivity.getSharedPreferences("username_login", Context.MODE_PRIVATE)
-                    val editor = sharedPref?.edit()
-                    editor?.putString("username", email)
-                    editor?.apply()
+                    val sharedPrefUsername = this@LoginActivity.getSharedPreferences("username_login", Context.MODE_PRIVATE)
+                    val editorUsername = sharedPrefUsername?.edit()
+                    editorUsername?.putString("username", email)
+                    editorUsername?.apply()
+
+                    val currentUserName = database.getCurrentUserName(email)
+                    val sharedPrefName = this@LoginActivity.getSharedPreferences("name_user", Context.MODE_PRIVATE)
+                    val editorName = sharedPrefName?.edit()
+                    editorName?.putString("name", currentUserName)
+                    editorName?.apply()
 
                     // This code checks if the user is already existing in the Realm database
                     // If not, it will create a new user and add the user to the Realm database
                     scope.launch(Dispatchers.IO) {
-                        val currentUserName = database.getCurrentUserName(email)
-
                         if (currentUserName == "" || currentUserName == null) {
                             val name = email.substringBefore("@")
                             database.addUser(name, email, password)
+
+                            editorName?.putString("name", name)
+                            editorName?.apply()
                         }
 
                         // Updates the password of the user once entered the application
+                        // This was done in order to update the password of the user if incase that person reset the password
                         database.updatePassword(email, password)
                     }
 

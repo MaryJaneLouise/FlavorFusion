@@ -83,6 +83,11 @@ class EditUserNameDialog : DialogFragment() {
                 scope.launch(Dispatchers.IO) {
                     if (username != null) {
                         database.updateUserName(username, newName)
+
+                        val sharedPrefName = context?.getSharedPreferences("name_user", Context.MODE_PRIVATE)
+                        val editorName = sharedPrefName?.edit()
+                        editorName?.putString("name", newName)
+                        editorName?.apply()
                     }
                     withContext(Dispatchers.Main) {
                         refreshDataCallback.refreshData()
